@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kick Chat (EndomY)",
-  "version": "3.1",
+  "version": "3.2",
   "description": "Auto send messages in Kick chat with delay options",
   "permissions": ["storage", "scripting", "tabs"],
   "action": {
@@ -17,3 +17,4 @@
     }
   ]
 }
+
