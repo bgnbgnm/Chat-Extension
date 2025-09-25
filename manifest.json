@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Kick Chat (EndomY)",
+  "version": "3.1",
+  "description": "Auto send messages in Kick chat with delay options",
+  "permissions": ["storage", "scripting", "tabs"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.kick.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

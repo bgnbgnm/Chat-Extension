@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Kick Chat Settings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body { font-family: "Segoe UI", "Arial", sans-serif; background: linear-gradient(135deg, #181818 60%, #232323 100%);
+      color: #f5f5f5; margin: 0; padding: 12px 14px; width: 480px; box-sizing: border-box; border-radius: 18px; border: 3px solid #f1c40f;
+      box-shadow: 0 0 18px #222a; position: relative; min-height: 100vh;}
+    h3 { text-align: center; margin-bottom: 5px; color: #f1c40f; font-size: 25px; letter-spacing: 1px; text-shadow: 1px 1px 3px #000;}
+    #msg { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); min-width: 180px; max-width: 340px; padding: 7px 18px;
+      color: #fff; background: #27ae60ef; font-size: 15px; font-weight: 500; border-radius: 7px; box-shadow: 0 4px 16px #0002; opacity: 0;
+      pointer-events: none; z-index: 100; transition: opacity 0.4s; text-align: center;}
+    #msg.show { opacity: 1; pointer-events: auto; }
+    .settings-row { display: flex; gap: 15px; justify-content: space-between; margin-bottom: 10px;}
+    label { margin-top: 8px; font-size: 14px; font-weight: 500; display: block;}
+    input[type="number"], input[type="text"], textarea { width: calc(100% - 25px); margin-top: 6px; padding: 9px 12px; border: 1px solid #444;
+      border-radius: 8px; font-size: 14px; background: #232323; color: #f5f5f5; transition: border 0.2s;}
+    input[type="number"]:focus, input[type="text"]:focus, textarea:focus { border-color: #f1c40f; box-shadow: 0 0 4px #f1c40f44;}
+    textarea { height: 100px; resize: vertical;}
+    .btn-row { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px;}
+    .btn { flex: 1; padding: 10px 0; font-size: 16px; font-weight: bold; border: none; border-radius: 9px; cursor: pointer;
+      transition: background 0.3s; color: #fff; text-shadow: 0 1px 2px #000; box-shadow: 0 2px 8px #111a; outline: none; display: flex;
+      align-items: center; justify-content: center; gap: 7px;}
+    .btn-save { background: linear-gradient(135deg, #27ae60, #2ecc71);}
+    .btn-save:hover { background: linear-gradient(135deg, #229954, #27ae60);}
+    .btn-start { background: linear-gradient(135deg, #2980b9, #3498db);}
+    .btn-start:hover { background: linear-gradient(135deg, #2471a3, #2980b9);}
+    .btn-stop { background: linear-gradient(135deg, #c0392b, #e74c3c);}
+    .btn-stop:hover { background: linear-gradient(135deg, #922b21, #c0392b);}
+    .btn-toggle-table { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #222; font-weight: bold; border-radius: 7px; margin-top: 8px;
+      margin-bottom: 3px; box-shadow: 0 1px 5px #2224; border: 2px solid #f1c40f; padding: 8px 0; width: 100%; transition: background 0.2s, border 0.2s; cursor: pointer;}
+    .btn-toggle-table.active { background: linear-gradient(135deg, #c0392b, #e74c3c); border: 2px solid #e74c3c;}
+    .btn-mode-group { display: flex; gap: 10px; margin-top: 8px; justify-content: space-evenly;}
+    .btn-mode { flex: 1; padding: 8px 0; font-size: 15px; font-weight: bold; border-radius: 8px; border: 2px solid #444; cursor: pointer;
+      box-shadow: 0 1px 8px #2226; color: #222; background: #353b48; transition: background 0.2s, border 0.15s; position: relative;}
+    .btn-mode.active { border: 2px solid #fff; background: linear-gradient(135deg, #27ae60 60%, #f1c40f 100%); color: #000; box-shadow: 0 0 10px 1px #f1c40f66;}
+    .btn-mode.random { background: linear-gradient(135deg, #27ae60, #43e97b);}
+    .btn-mode.max { background: linear-gradient(135deg, #f1c40f, #f39c12); color: #222;}
+    .btn-mode.fast { background: linear-gradient(135deg, #e74c3c, #e67e22);}
+    .btn-mode:hover { border: 2px solid #fff;}
+    #fastTextWrapper { margin-top: 9px;}
+    .msg-mode-btn { background: #353b48; color: #fff; border-radius: 8px; border: 2px solid #444; padding: 7px 17px; font-size: 15px;
+      font-weight: 500; cursor: pointer; transition: background 0.18s, border 0.18s;}
+    .msg-mode-btn.active { border: 2px solid #fff; background: linear-gradient(135deg, #27ae60, #f1c40f 95%); color: #232323;}
+    .msg-mode-btn:hover { border: 2px solid #fff; background: #2ecc71; color: #232323;}
+    .stats { margin-top: 8px; padding: 3px 13px 3px 13px; background: #232323; border-radius: 14px; font-size: 15px; border: 1px solid #444;
+      box-shadow: 0 1px 7px #2226; display: flex; flex-direction: column; gap: 7px;}
+    .stats span { font-weight: bold; color: #27ae60; font-size: 16px;}
+    .progress-bar { width: 100%; background: #222; border-radius: 10px; height: 9px; margin-top: 6px; overflow: hidden; margin-bottom: 5px;}
+    .progress-value { height: 100%; background: linear-gradient(90deg, #27ae60, #f1c40f); transition: width 0.4s;}
+    #remainingTime { margin-top: 6px; color: #f1c40f; font-weight: 600; font-size: 15px; text-align: left;}
+    .indicator { display: inline-block; width: 13px; height: 13px; border-radius: 50%; margin-right: 7px; border: 2px solid #f1c40f; vertical-align: middle;}
+    .indicator.running { background: #27ae60; box-shadow: 0 0 7px #27ae60;}
+    .indicator.stopped { background: #c0392b; box-shadow: 0 0 7px #c0392b;}
+    #messageListSection { margin-bottom: 12px; }
+    #messageListSection.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div id="msg" class="msg"></div>
+  <div class="settings-row">
+    <div style="flex:1;">
+      <label>⏱ Min Time (seconds):</label>
+      <input type="number" id="minTime" min="1" value="60" placeholder="60">
+    </div>
+    <div style="flex:1;">
+      <label>⏱ Max Time (seconds):</label>
+      <input type="number" id="maxTime" min="1" value="120" placeholder="120">
+    </div>
+    <div style="flex:1;">
+      <label>⏳ Run Duration (minutes):</label>
+      <input type="number" id="runDuration" min="1" value="" placeholder="unlimited">
+    </div>
+  </div>
+  <div class="btn-mode-group">
+    <button class="btn-mode random" id="randomModeBtn"><i class="fa-solid fa-dice"></i> Random</button>
+    <button class="btn-mode max" id="maxModeBtn"><i class="fa-solid fa-stopwatch"></i> Max</button>
+    <button  class="btn-mode fast" id="fastModeBtn"><i class="fa-solid fa-bolt"></i> Fast</button>
+  </div>
+  <div style="margin: 15px 0 7px 0; display: flex; align-items: center; gap: 16px;">
+    <label style="margin:0;font-size:15px;">Message Mode:</label>
+    <button id="emojiModeBtn" class="msg-mode-btn active">Emotes mode</button>
+    <button id="customizeModeBtn" class="msg-mode-btn">Customize</button>
+  </div>
+
+  <div id="messageListSection" class="hidden">
+    <label style="margin-bottom:6px;margin-top:6px;">Message List:</label>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <select id="messageListSelect" style="flex:1;padding:8px 12px;border-radius:7px;background:#232323;color:#fff;border:1px solid #444;font-size:15px;"></select>
+      <button id="addListBtn" class="btn" style="padding:6px 10px;background:#27ae60;">Add</button>
+      <button id="editListBtn" class="btn" style="padding:6px 10px;background:#f1c40f;color:#222;">Edit</button>
+      <button id="deleteListBtn" class="btn" style="padding:6px 10px;background:#e74c3c;">Delete</button>
+    </div>
+  </div>
+
+  <div id="customizeArea" style="display:none;">
+    <label>📝 Messages (one per line):</label>
+    <textarea id="lines" placeholder="Type your messages here..."></textarea>
+  </div>
+  <div id="fastTextWrapper" style="display:none;">
+    <label>⚡ Fast Mode Text:</label>
+    <input type="text" id="fastText" placeholder="Enter text for fast mode...">
+  </div>
+  <div class="btn-row" style="margin-bottom:10px;">
+    <button class="btn btn-save" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    <button class="btn btn-start" id="startBtn"><i class="fa-solid fa-play"></i> Start</button>
+    <button class="btn btn-stop" id="stopBtn"><i class="fa-solid fa-stop"></i> Stop</button>
+  </div>
+  <button id="toggleTableBtn" class="btn-toggle-table"><i class="fa-solid fa-table"></i> Show Table Inside Kick</button>
+
+  <div class="stats">
+    <div>
+      <span id="statusIndicator" class="indicator stopped"></span>
+      <span id="statusText">Stopped</span>
+    </div>
+    <div>
+      📤 Sent Messages: <span id="sentCount">0</span>
+      <span style="margin-left:10px;">📝 Lines Entered: <span id="linesCount">0</span></span>
+    </div>
+    <div>
+      ⏳ Next in: <span id="countdown">-</span> sec
+      <div class="progress-bar">
+        <div class="progress-value" id="progressValue" style="width:0;"></div>
+      </div>
+      <div  id="remainingTime"></div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
